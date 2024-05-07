@@ -22,7 +22,7 @@ class SQLCoder:
             num_beams=4,
         )
 
-    def generate_prompt(self, question, prompt_file="/root/sqlcoder-updates/sqlcoder/prompt.md", metadata_file="/root/sqlcoder-updates/sqlcoder/metadata.sql"):
+    def generate_prompt(self, question, prompt_file="/root/sqlcoder/sqlcoder/prompt.md", metadata_file="/root/sqlcoder/sqlcoder/metadata.sql"):
         with open(prompt_file, "r") as f:
             prompt = f.read()
         
