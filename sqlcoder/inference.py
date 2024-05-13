@@ -3,6 +3,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 import argparse
 
 def generate_prompt(question, previous_error='', prompt_file="/root/sqlcoder/sqlcoder/prompt.md", metadata_file="/root/sqlcoder/sqlcoder/metadata.sql"):
+
     with open(prompt_file, "r") as f:
         prompt = f.read()
     
@@ -26,10 +27,12 @@ def get_tokenizer_model(model_name):
     )
     return tokenizer, model
 
+
 def run_inference(question, previous_error='', prompt_file="/root/sqlcoder/sqlcoder/prompt.md", metadata_file="/root/sqlcoder/sqlcoder/metadata.sql"):
     tokenizer, model = get_tokenizer_model("defog/llama-3-sqlcoder-8b")
     # tokenizer, model = get_tokenizer_model("defog/sqlcoder-70b-alpha") # Needs more than 50 gigs of storage to save tensors
     prompt = generate_prompt(question, previous_error, prompt_file, metadata_file)
+
     
     # make sure the model stops generating at triple ticks
     # eos_token_id = tokenizer.convert_tokens_to_ids(["```"])[0]
@@ -61,6 +64,7 @@ def run_inference(question, previous_error='', prompt_file="/root/sqlcoder/sqlco
 if __name__ == "__main__":
     # Parse arguments
     _default_question="How many patients are there?"
+
     parser = argparse.ArgumentParser(description="Run inference on a question")
     parser.add_argument("-q","--question", type=str, default=_default_question, help="Question to run inference on")
     args = parser.parse_args()
