@@ -2,7 +2,8 @@ import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 import argparse
 
-def generate_prompt(question, prompt_file="/root/sqlcoder/sqlcoder/prompt.md", metadata_file="/root/sqlcoder/sqlcoder/metadata.sql"):
+def generate_prompt(question, previous_error='', prompt_file="/root/sqlcoder/sqlcoder/prompt.md", metadata_file="/root/sqlcoder/sqlcoder/metadata.sql"):
+
     with open(prompt_file, "r") as f:
         prompt = f.read()
     
@@ -10,7 +11,7 @@ def generate_prompt(question, prompt_file="/root/sqlcoder/sqlcoder/prompt.md", m
         table_metadata_string = f.read()
 
     prompt = prompt.format(
-        user_question=question, table_metadata_string=table_metadata_string
+        user_question=question, table_metadata_string=table_metadata_string, error=previous_error
     )
     return prompt
 
@@ -26,10 +27,12 @@ def get_tokenizer_model(model_name):
     )
     return tokenizer, model
 
-def run_inference(question, prompt_file="/root/sqlcoder/sqlcoder/prompt.md", metadata_file="/root/sqlcoder/sqlcoder/metadata.sql"):
+
+def run_inference(question, previous_error='', prompt_file="/root/sqlcoder/sqlcoder/prompt.md", metadata_file="/root/sqlcoder/sqlcoder/metadata.sql"):
     tokenizer, model = get_tokenizer_model("defog/llama-3-sqlcoder-8b")
     # tokenizer, model = get_tokenizer_model("defog/sqlcoder-70b-alpha") # Needs more than 50 gigs of storage to save tensors
-    prompt = generate_prompt(question, prompt_file, metadata_file)
+    prompt = generate_prompt(question, previous_error, prompt_file, metadata_file)
+
     
     # make sure the model stops generating at triple ticks
     # eos_token_id = tokenizer.convert_tokens_to_ids(["```"])[0]
@@ -60,7 +63,8 @@ def run_inference(question, prompt_file="/root/sqlcoder/sqlcoder/prompt.md", met
 
 if __name__ == "__main__":
     # Parse arguments
-    _default_question="Do we get more sales from customers in New York compared to customers in San Francisco? Give me the total sales for each city, and the difference between the two."
+    _default_question="How many patients are there?"
+
     parser = argparse.ArgumentParser(description="Run inference on a question")
     parser.add_argument("-q","--question", type=str, default=_default_question, help="Question to run inference on")
     args = parser.parse_args()

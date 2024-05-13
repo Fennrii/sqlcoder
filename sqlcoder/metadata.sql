@@ -75,7 +75,7 @@ CREATE TABLE public.patient_clinicalpatient (
     first_appt_date timestamp with time zone, -- Date of the patient's first appointment
     current_pathology_clinician character varying(64) NOT NULL, -- Current clinician handling the patient's pathology
     last_pathology_clinician character varying(64) NOT NULL, -- Last clinician who handled the patient's pathology
-    last_appointment_date date, -- Date of the patient's last appointment
+    last_appointment_date date, -- The date of the patient's last appointment
     phoebe_file_names ARRAY, -- File names related to the patient's records
     last_patho_review_date date, -- Last review date of the patient's pathology
     ethnicity character varying(4096), -- Patient's ethnicity
